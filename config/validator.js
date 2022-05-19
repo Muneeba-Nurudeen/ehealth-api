@@ -1,6 +1,6 @@
 const yup = require("yup");
 
-function validate(data) {
+function validateRegister(data) {
   const userSchema = yup.object().shape({
     username: yup.string().required("username can't be null").min(3).max(20),
     email: yup.string().email().required("email can't be null").min(3).max(50),
@@ -10,10 +10,9 @@ function validate(data) {
   return userSchema.validate(data);
 }
 
-function validate(data) {
+function validateLoginPersonnel(data) {
   const personnelSchema = yup.object().shape({
-    username: yup.string().required("username can't be null").min(3).max(20),
-    email: yup.string().email().required("email can't be null").min(3).max(50),
+    staffId: yup.string().required("staffId can't be null").min(3).max(20),
     password: yup.string().required("password can't be null").min(8).max(20),
   });
 
@@ -21,7 +20,7 @@ function validate(data) {
 }
 
 
-function validate(data) {
+function validateAdmin(data) {
   const adminSchema = yup.object().shape({
     username: yup.string().required("username can't be null").min(3).max(20),
     email: yup.string().email().required("email can't be null").min(3).max(50),
@@ -31,4 +30,8 @@ function validate(data) {
   return adminSchema.validate(data);
 }
 
-module.exports = validate;
+module.exports = { 
+  validateAdmin,
+  validateLoginPersonnel,
+  validateRegister
+}

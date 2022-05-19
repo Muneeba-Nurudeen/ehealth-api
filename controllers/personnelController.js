@@ -1,25 +1,24 @@
-const User = require("../models/userSchema");
+const Personnel = require("../models/personnelSchema");
 const bcrypt = require("bcryptjs");
-const validate = require("../config/validator");
+const { validateLoginPersonnel} = require("../config/validator");
 const { generateToken } = require("../utils/generateToken");
 
 // create a new personnel
 const createUser = async (req, res) => {
-  const { username, email, password } = req.body;
-  const valid = await validate({ username, email, password });
+  const { staffId, password } = req.body;
+  const valid = await validateLoginPersonnel({ staffId, password });
 
   if (valid) {
     const hashedPassword = await bcrypt.hash(valid.password, 10);
-    const user = await User.create({
-      username,
-      email,
+    const user = await Personnel.create({
+      staffId,
       password: hashedPassword,
     });
 
     if (user) {
       res.status(201).json({
-        username: user.username,
-        email: user.email,
+        staffId: user.staffId,
+        password: user.password,
         id: user._id,
         token: generateToken(user._id),
       });
@@ -34,15 +33,15 @@ const createUser = async (req, res) => {
 //auth a personnel
 async function loginUser(req, res) {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { staffId, password } = req.body;
+    const user = await Personnel.findOne({ staffId });
 
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         res.status(200).json({
-          username: user.username,
-          email: user.email,
+          staffId: user.staffId,
+          password: user.password,
           id: user._id,
           token: generateToken(user._id),
         });
@@ -53,7 +52,7 @@ async function loginUser(req, res) {
       }
     } else {
       res.status(401).json({
-        message: "Invalid email",
+        message: "Invalid staffId",
       });
     }
   } catch {
